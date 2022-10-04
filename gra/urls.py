@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.IndexView.as_view(), name='index'),
     path('create_hero/', views.CreateHeroView.as_view(), name='create_hero'),
+    path('create_monster/', views.AddMonsterView.as_view(), name='create_monster'),
+    path('all_heroes/', views.HeroListView.as_view(), name='hero_list'),
 ]

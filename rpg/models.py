@@ -10,3 +10,19 @@ class Hero(models.Model):
     attack = models.IntegerField(default=10)
     defence = models.IntegerField(default=10)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class Monster(models.Model):
+    name = models.CharField(max_length=50)
+    hp = models.IntegerField(default=100)
+    attack = models.IntegerField()
+    defence = models.IntegerField()
+
+
+
+
+
