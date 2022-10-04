@@ -23,5 +23,6 @@ urlpatterns = [
     path('create_hero/', views.CreateHeroView.as_view(), name='create_hero'),
     path('create_monster/', views.AddMonsterView.as_view(), name='create_monster'),
     path('all_heroes/', views.HeroListView.as_view(), name='hero_list'),
+    path('all_monsters/', views.MonsterListView.as_view(), name='monster_list'),
     path('create_user/', views.CreateUserView.as_view(), name='create_user'),
 ]

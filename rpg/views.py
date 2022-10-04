@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from rpg.forms import HeroCreateForm, MonsterCreateForm, CreateUserForm
-from rpg.models import Hero
+from rpg.models import Hero, Monster
 
 
 # Create your views here.
@@ -50,6 +50,12 @@ class AddMonsterView(View):
             form.save()
             return redirect('create_monster')
         return render(request, 'form.html', {'formularz': form})
+
+class MonsterListView(View):
+
+    def get(self, request):
+        monster = Monster.objects.all()
+        return render(request, 'hero_list.html', {'heroes':monster})
 
 
 class CreateUserView(View):

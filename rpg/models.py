@@ -22,6 +22,9 @@ class Monster(models.Model):
     attack = models.IntegerField()
     defence = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 
 
