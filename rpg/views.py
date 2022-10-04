@@ -59,9 +59,11 @@ class CreateUserView(View):
         return render(request, 'form.html', {'formularz': form})
 
     def post(self, request):
-        form = CreateUserForm(request.POST)
+        form = CreateUserForm(request.POST) #pobiera dane wysłane postem i na  ich podstawie
+        # wypełnia forlmularz CreateUserForm
 
-        if form.is_valid():
+        if form.is_valid(): #nastepuje validacja formlarza czyli validowane sa wszystkie pola
+                            # a następnie wywołana metoda clean w formularzu
             user = form.save(commit=False) # commit = False powoduje ze nie zostanie CAŁY obiekt zapisany do bazy danych
             password = user.password
             user.set_password(password)

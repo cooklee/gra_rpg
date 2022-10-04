@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 from rpg.models import Monster
 
@@ -15,9 +16,19 @@ class MonsterCreateForm(forms.ModelForm):
         fields = '__all__'
 
 
+def validate_password(value):
+    if len(value) < 8:
+        raise ValidationError('Hasło jest za krótkie')
+
+def check_if_has_number(value):
+    if not any(x for x in value if x.isdigit()):
+        raise ValidationError('Hasło musi mieć numer')
+
 class CreateUserForm(forms.ModelForm):
     password1 = forms.CharField(label='Password',
-                                widget=forms.PasswordInput(attrs={'class':'form-control'}))
+                                widget=forms.PasswordInput(attrs={'class':'form-control'}),
+                                validators=[validate_password, check_if_has_number],
+                                help_text='Hasło ma być dłuższe niż 8')
     password2 = forms.CharField(label='re-Password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
     class Meta:
         model = User
@@ -27,3 +38,11 @@ class CreateUserForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean(self):
+        data = super().clean() # data to bedzie słownik ze wszystkimi polami z formularza
+        #które PRZESZŁY walidacje
+
+        if data.get('password1') != data.get('password2'):
+            raise ValidationError('Hasła nie są identyczne')
+        return data
