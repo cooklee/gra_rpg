@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        {{ formularz.as_p }}
-        <input type="submit">
-    </form>
+    <div class="card w-25">
+        <div class="card-body">
+            <form method="post" class="form">
+                {% csrf_token %}
+                {{ formularz.as_p }}
+                <input type="submit">
+            </form>
+        </div>
+    </div>
 {% endblock %}
