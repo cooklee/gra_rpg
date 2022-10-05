@@ -1,4 +1,5 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView
@@ -24,8 +25,8 @@ class HeroListView(View):
         return render(request, 'hero_list.html', {'heroes':heroes})
 
 
-class CreateHeroView(View):
-
+class CreateHeroView(LoginRequiredMixin, View): # LoginRequiredMixin pozwala wejść tylko zalogowanym użytkowniką
+                                                # musi być pierwszą klasą z której dziedziczymy
     def get(self, request):
         form = HeroCreateForm()
         return render(request, 'form.html', {'form':form})
@@ -80,7 +81,7 @@ class CreateUserView(View):
         return render(request, 'form.html', {'form': form})
 
 
-class CreateGameView(CreateView):
+class CreateGameView(LoginRequiredMixin,CreateView):
 
     model = Game
     template_name = 'form.html'
@@ -104,8 +105,17 @@ class LoginView(View):
                 return render(request, 'form.html', {'form': form, 'message':"Niepoprawne dane"})
             else:
                 login(request, user)
-                return redirect("index")
+                url = request.GET.get('next', 'index')
+                return redirect(url)
         return render(request, 'form.html', {'form': form, 'message': "Niepoprawne dane"})
+
+
+class LogoutView(View):
+
+    def get(self, request):
+        logout(request)
+        return redirect('index')
+
 
 
 
