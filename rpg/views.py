@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView
@@ -40,7 +40,10 @@ class CreateHeroView(LoginRequiredMixin, View): # LoginRequiredMixin pozwala wej
             return redirect('create_hero')
         return render(request, 'form.html', {'form': form})
 
-class AddMonsterView(View):
+class AddMonsterView(UserPassesTestMixin, View):
+
+    def test_func(self):  # funkcja musi nazywać sie test_func
+        return self.request.user.is_superuser
 
     def get(self, request):
         form = MonsterCreateForm()
@@ -53,6 +56,7 @@ class AddMonsterView(View):
             form.save()
             return redirect('create_monster')
         return render(request, 'form.html', {'form': form})
+
 
 class MonsterListView(View):
 
