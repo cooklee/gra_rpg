@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView
@@ -25,6 +25,12 @@ class HeroListView(View):
         return render(request, 'hero_list.html', {'heroes':heroes})
 
 
+class MyHeroListView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        heroes = Hero.objects.filter(owner=request.user)
+        return render(request, 'hero_list.html', {'heroes':heroes})
+
 class CreateHeroView(LoginRequiredMixin, View): # LoginRequiredMixin pozwala wejść tylko zalogowanym użytkowniką
                                                 # musi być pierwszą klasą z której dziedziczymy
     def get(self, request):
@@ -36,7 +42,7 @@ class CreateHeroView(LoginRequiredMixin, View): # LoginRequiredMixin pozwala wej
 
         if form.is_valid():
             name = form.cleaned_data['name']
-            Hero.objects.create(name=name)
+            Hero.objects.create(name=name, owner=request.user)
             return redirect('create_hero')
         return render(request, 'form.html', {'form': form})
 
@@ -58,7 +64,9 @@ class AddMonsterView(UserPassesTestMixin, View):
         return render(request, 'form.html', {'form': form})
 
 
-class MonsterListView(View):
+class MonsterListView(PermissionRequiredMixin, View):
+
+    permission_required = ['rpg.change_monster']
 
     def get(self, request):
         monster = Monster.objects.all()
