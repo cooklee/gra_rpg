@@ -26,6 +26,18 @@ class Monster(models.Model):
         return f"{self.name}"
 
 
+class Game(models.Model):
+    hero = models.ForeignKey(Hero, on_delete=models.CASCADE)
+    level = models.IntegerField()
+    monsters = models.ManyToManyField(Monster, through='MonsterInGame')
+
+
+class MonsterInGame(models.Model):
+    monster = models.ForeignKey(Monster, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+
+
 
 
 

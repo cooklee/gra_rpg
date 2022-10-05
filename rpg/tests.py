@@ -3,7 +3,7 @@ from django.test import Client
 from django.urls import reverse
 
 from rpg.forms import HeroCreateForm, MonsterCreateForm
-from rpg.models import Hero, Monster
+from rpg.models import Hero, Monster, Game
 
 
 def test_index():
@@ -69,3 +69,18 @@ def test_add_monster_post():
     assert response.status_code == 302  # bo w widoku jest redirect
     assert response.url.startswith(url)
     assert Monster.objects.get(name='slawek', hp=100, attack=100, defence=100)  # sprawdz czy slawek jest w bazie danych
+
+
+
+@pytest.mark.django_db
+def test_add_monster_post(hero):
+    client = Client()
+    url = reverse('create_game')
+    data = {
+        'hero': hero.id,
+        'level': 100,
+
+    }
+    response = client.post(url, data)  # wejdz metodą post nasza symulacyjną przegladarka na tego URL
+    assert response.status_code == 302  # bo w widoku jest redirect
+    assert Game.objects.get(level=100, hero=hero)  # sprawdz czy slawek jest w bazie danych

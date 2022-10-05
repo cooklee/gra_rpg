@@ -1,8 +1,10 @@
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import CreateView
 
-from rpg.forms import HeroCreateForm, MonsterCreateForm, CreateUserForm
-from rpg.models import Hero, Monster
+from rpg.forms import HeroCreateForm, MonsterCreateForm, CreateUserForm, LoginForm
+from rpg.models import Hero, Monster, Game
 
 
 # Create your views here.
@@ -26,7 +28,7 @@ class CreateHeroView(View):
 
     def get(self, request):
         form = HeroCreateForm()
-        return render(request, 'form.html', {'formularz':form})
+        return render(request, 'form.html', {'form':form})
 
     def post(self, request):
         form = HeroCreateForm(request.POST)
@@ -35,13 +37,13 @@ class CreateHeroView(View):
             name = form.cleaned_data['name']
             Hero.objects.create(name=name)
             return redirect('create_hero')
-        return render(request, 'form.html', {'formularz': form})
+        return render(request, 'form.html', {'form': form})
 
 class AddMonsterView(View):
 
     def get(self, request):
         form = MonsterCreateForm()
-        return render(request, 'form.html', {'formularz': form})
+        return render(request, 'form.html', {'form': form})
 
     def post(self, request):
         form = MonsterCreateForm(request.POST)
@@ -49,7 +51,7 @@ class AddMonsterView(View):
         if form.is_valid():
             form.save()
             return redirect('create_monster')
-        return render(request, 'form.html', {'formularz': form})
+        return render(request, 'form.html', {'form': form})
 
 class MonsterListView(View):
 
@@ -62,7 +64,7 @@ class CreateUserView(View):
 
     def get(self, request):
         form = CreateUserForm()
-        return render(request, 'form.html', {'formularz': form})
+        return render(request, 'form.html', {'form': form})
 
     def post(self, request):
         form = CreateUserForm(request.POST) #pobiera dane wysłane postem i na  ich podstawie
@@ -71,8 +73,40 @@ class CreateUserView(View):
         if form.is_valid(): #nastepuje validacja formlarza czyli validowane sa wszystkie pola
                             # a następnie wywołana metoda clean w formularzu
             user = form.save(commit=False) # commit = False powoduje ze nie zostanie CAŁY obiekt zapisany do bazy danych
-            password = user.password
+            password = form.cleaned_data['password1']
             user.set_password(password)
             user.save()
             return redirect('create_monster')
-        return render(request, 'form.html', {'formularz': form})
+        return render(request, 'form.html', {'form': form})
+
+
+class CreateGameView(CreateView):
+
+    model = Game
+    template_name = 'form.html'
+    success_url = '/'
+    fields = ['hero', 'level']
+
+
+class LoginView(View):
+
+    def get(self, request):
+        form = LoginForm()
+        return render(request, 'form.html', {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            us = form.cleaned_data['username']
+            pd = form.cleaned_data['password']
+            user = authenticate(username=us, password=pd)
+            if user is None:
+                return render(request, 'form.html', {'form': form, 'message':"Niepoprawne dane"})
+            else:
+                login(request, user)
+                return redirect("index")
+        return render(request, 'form.html', {'form': form, 'message': "Niepoprawne dane"})
+
+
+
+
