@@ -1,14 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
     <p>poziom: {{ stage.level }}</p>
-    <p>grasz bohaterem : {{ stage.game.hero }}</p>
-    <p>
-    <ul>
+    <table class="table">
+        <tr>
+            <th>hp</th>
+            <th>attack</th>
+            <th>def</th>
+        </tr>
+        <tr>
+            <td> {{ stage.game.hero.hp }}</td>
+            <td>{{ stage.game.hero.attack }}</td>
+            <td>{{ stage.game.hero.defence }}</td>
+        </tr>
+    </table>
+<hr >
+    <table class="table">
+        <tr>
+            <th>name</th>
+            <th>hp</th>
+            <th>attack</th>
+            <th>def</th>
+        </tr>
+
         {% for aliveMonster in stage.monsters.all %}
-            <li>{{ aliveMonster.name }} {{ aliveMonster.current_hp }}</li>
+
+
+            <tr>
+                <td> {{ aliveMonster.name }}</td>
+                <td> {{ aliveMonster.current_hp }}</td>
+                <td>{{ aliveMonster.attack }}</td>
+                <td>{{ aliveMonster.defence }}</td>
+            </tr>
+
         {% endfor %}
-    </ul>
-    </p>
+    </table>
+
 
 
 {% endblock %}
