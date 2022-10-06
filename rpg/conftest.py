@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth.models import User
 
 from rpg.models import Hero
 
@@ -14,3 +15,7 @@ def heroes():
 @pytest.fixture
 def hero():
     return Hero.objects.create(name='Thor')
+
+@pytest.fixture
+def user():
+    return User.objects.create(username='test')

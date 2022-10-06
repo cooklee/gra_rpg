@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView
 
@@ -86,6 +87,7 @@ class CreateUserView(View):
         if form.is_valid(): #nastepuje validacja formlarza czyli validowane sa wszystkie pola
                             # a następnie wywołana metoda clean w formularzu
             user = form.save(commit=False) # commit = False powoduje ze nie zostanie CAŁY obiekt zapisany do bazy danych
+
             password = form.cleaned_data['password1']
             user.set_password(password)
             user.save()
@@ -99,6 +101,20 @@ class CreateGameView(LoginRequiredMixin,CreateView):
     template_name = 'form.html'
     success_url = '/'
     fields = ['hero', 'level']
+
+class CreateGameForHero(LoginRequiredMixin, View):
+
+    def get(self, request, id_hero):
+        hero = Hero.objects.get(pk=id_hero)  #pobranie bochatera o id id_hero
+        game = Game.objects.create(hero=hero, level=1)
+        url = reverse('game_detail', args=(game.id, ))
+        return redirect(url)
+
+class GameDetailView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        game = Game.objects.get(pk=pk)
+        return render(request, 'game_detail.html', {'game':game})
 
 
 class LoginView(View):

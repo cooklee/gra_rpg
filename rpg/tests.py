@@ -73,7 +73,7 @@ def test_add_monster_post():
 
 
 @pytest.mark.django_db
-def test_add_monster_post(hero):
+def test_add_game_post(hero):
     client = Client()
     url = reverse('create_game')
     data = {
@@ -84,3 +84,14 @@ def test_add_monster_post(hero):
     response = client.post(url, data)  # wejdz metodą post nasza symulacyjną przegladarka na tego URL
     assert response.status_code == 302  # bo w widoku jest redirect
     assert Game.objects.get(level=100, hero=hero)  # sprawdz czy slawek jest w bazie danych
+
+
+@pytest.mark.django_db
+def test_create_game_for_a_hero(hero, user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('create_game_for_hero', args=(hero.id,))
+    response = client.get(url)
+    assert response.status_code == 302
+    url = reverse('game_detail', args=(Game.objects.get(hero=hero).id, ))
+    assert response.url.startswith(url)

@@ -27,6 +27,11 @@ urlpatterns = [
     path('all_monsters/', views.MonsterListView.as_view(), name='monster_list'),
     path('create_user/', views.CreateUserView.as_view(), name='create_user'),
     path('create_game/', views.CreateGameView.as_view(), name='create_game'),
+    path('create_game/<int:id_hero>/', views.CreateGameForHero.as_view(), name='create_game_for_hero'),
+    path('detail_game/<int:pk>/', views.GameDetailView.as_view(), name='game_detail'),
+
+
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
+
 ]
