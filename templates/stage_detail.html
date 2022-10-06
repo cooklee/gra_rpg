@@ -33,8 +33,9 @@
                 <td>{{ aliveMonster.attack }}</td>
                 <td>{{ aliveMonster.defence }}</td>
                 {% if aliveMonster.current_hp > 0 %}
-                <td><a class='btn btn-danger' href="{% url 'attack_monster' aliveMonster.id stage.game.hero.id%}">Atakuj</a> </td>
-            {% endif %}
+                    <td><a class='btn btn-danger' href="{% url 'attack_monster' aliveMonster.id stage.game.hero.id %}">Atakuj</a>
+                    </td>
+                {% endif %}
             </tr>
 
         {% endfor %}

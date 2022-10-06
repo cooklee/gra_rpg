@@ -62,7 +62,8 @@ class Stage(models.Model):
         amount = randint(0, 5)
         for _ in range(amount):
             mc = choice(monster_list)
-            am = AliveMonster.objects.create(monster_class=mc, current_hp=mc.hp)
+            extra_hp = randint(0,10)
+            am = AliveMonster.objects.create(monster_class=mc, current_hp=mc.hp+extra_hp)
             AlavieMonsterInStage.objects.create(stage=self, monster=am)
 
 

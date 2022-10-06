@@ -22,7 +22,7 @@ class IndexView(View):
 class HeroListView(View):
 
     def get(self, request):
-        heroes = Hero.objects.all()
+        heroes = Hero.objects.order_by('-attack')
         return render(request, 'hero_list.html', {'heroes': heroes})
 
 
