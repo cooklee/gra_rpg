@@ -1,3 +1,5 @@
+from random import choice
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.shortcuts import render, redirect
@@ -116,6 +118,29 @@ class GameDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         game = Game.objects.get(pk=pk)
         return render(request, 'game_detail.html', {'game':game})
+
+
+class FightView(LoginRequiredMixin, View):
+    def get(self,request, stage_id):
+        stage = Stage.objects.get(pk=stage_id)
+        monsters = stage.monsters.filter(current_hp__gt=0)
+        hero = stage.game.hero
+        target = choice(monsters)
+        dm = hero.attack - target.defence
+        if dm <= 0 :
+            dm = 1
+        target.current_hp -= dm
+        target.save()
+        monster_dmg = 0
+        for monster in monsters:
+            dm = monster.attack - hero.defence
+            if dm <=0:
+                dm = 1
+            monster_dmg += dm
+        hero.hp -= dm
+        hero.save()
+        url = reverse('stage_detail', args=(stage_id,))
+        return redirect(url)
 
 class StageDetailView(LoginRequiredMixin, View):
 

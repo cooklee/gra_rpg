@@ -30,6 +30,7 @@ urlpatterns = [
     path('create_game/<int:id_hero>/', views.CreateGameForHero.as_view(), name='create_game_for_hero'),
     path('detail_game/<int:pk>/', views.GameDetailView.as_view(), name='game_detail'),
     path('detail_stage/<int:pk>/', views.StageDetailView.as_view(), name='stage_detail'),
+    path('fight/<int:stage_id>/', views.FightView.as_view(), name='fight'),
 
 
     path('login/', views.LoginView.as_view(), name='login'),

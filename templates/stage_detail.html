@@ -13,7 +13,7 @@
             <td>{{ stage.game.hero.defence }}</td>
         </tr>
     </table>
-<hr >
+    <hr>
     <table class="table">
         <tr>
             <th>name</th>
@@ -34,7 +34,7 @@
 
         {% endfor %}
     </table>
-
+    <a href="{% url 'fight' stage.id %}" class="btn btn-danger">Walcz</a>
 
 
 {% endblock %}
