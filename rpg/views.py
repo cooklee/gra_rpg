@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import CreateView
 
 from rpg.forms import HeroCreateForm, MonsterCreateForm, CreateUserForm, LoginForm
-from rpg.models import Hero, Monster, Game
+from rpg.models import Hero, Monster, Game, Stage, AlavieMonsterInStage
 
 
 # Create your views here.
@@ -107,7 +107,8 @@ class CreateGameForHero(LoginRequiredMixin, View):
     def get(self, request, id_hero):
         hero = Hero.objects.get(pk=id_hero)  #pobranie bochatera o id id_hero
         game = Game.objects.create(hero=hero, level=1)
-        url = reverse('game_detail', args=(game.id, ))
+        stage = Stage.objects.create(game=game)
+        url = reverse('stage_detail', args=(stage.id, ))
         return redirect(url)
 
 class GameDetailView(LoginRequiredMixin, View):
@@ -115,6 +116,16 @@ class GameDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         game = Game.objects.get(pk=pk)
         return render(request, 'game_detail.html', {'game':game})
+
+class StageDetailView(LoginRequiredMixin, View):
+
+    def get(self, request, pk):
+        stage = Stage.objects.get(pk=pk)
+        if not stage.visited:
+            stage.generate_monster()
+            stage.visited = True
+            stage.save()
+        return render(request, 'stage_detail.html', {'stage':stage})
 
 
 class LoginView(View):

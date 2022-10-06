@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p>poziom: {{ stage.level }}</p>
+    <p>grasz bohaterem : {{ stage.game.hero }}</p>
+    <p>
+    <ul>
+        {% for aliveMonster in stage.monsters.all %}
+            <li>{{ aliveMonster.name }} {{ aliveMonster.current_hp }}</li>
+        {% endfor %}
+    </ul>
+    </p>
+
+
+{% endblock %}
