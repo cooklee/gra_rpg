@@ -109,7 +109,8 @@ class CreateGameForHero(LoginRequiredMixin, View):
     def get(self, request, id_hero):
         hero = Hero.objects.get(pk=id_hero)  #pobranie bochatera o id id_hero
         game = Game.objects.create(hero=hero, level=1)
-        stage = Stage.objects.create(game=game)
+        stage = Stage.objects.create(game=game, level=2)
+        stage = Stage.objects.create(game=game, next_stage=stage)
         url = reverse('stage_detail', args=(stage.id, ))
         return redirect(url)
 
@@ -125,20 +126,21 @@ class FightView(LoginRequiredMixin, View):
         stage = Stage.objects.get(pk=stage_id)
         monsters = stage.monsters.filter(current_hp__gt=0)
         hero = stage.game.hero
-        target = choice(monsters)
-        dm = hero.attack - target.defence
-        if dm <= 0 :
-            dm = 1
-        target.current_hp -= dm
-        target.save()
-        monster_dmg = 0
-        for monster in monsters:
-            dm = monster.attack - hero.defence
-            if dm <=0:
+        if monsters.count() > 0:
+            target = choice(monsters)
+            dm = hero.attack - target.defence
+            if dm <= 0 :
                 dm = 1
-            monster_dmg += dm
-        hero.hp -= dm
-        hero.save()
+            target.current_hp -= dm
+            target.save()
+            monster_dmg = 0
+            for monster in monsters:
+                dm = monster.attack - hero.defence
+                if dm <=0:
+                    dm = 1
+                monster_dmg += dm
+            hero.hp -= dm
+            hero.save()
         url = reverse('stage_detail', args=(stage_id,))
         return redirect(url)
 
@@ -146,6 +148,8 @@ class StageDetailView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         stage = Stage.objects.get(pk=pk)
+        if stage.next_stage is None:
+            stage.next_stage = Stage.objects.create(game=stage.game, level=stage.level + 1)
         if not stage.visited:
             stage.generate_monster()
             stage.visited = True

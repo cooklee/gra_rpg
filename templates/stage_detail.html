@@ -13,7 +13,9 @@
             <td>{{ stage.game.hero.defence }}</td>
         </tr>
     </table>
+
     <hr>
+    <a href="{% url 'fight' stage.id %}" class="btn btn-danger">Walcz</a>
     <table class="table">
         <tr>
             <th>name</th>
@@ -34,7 +36,14 @@
 
         {% endfor %}
     </table>
-    <a href="{% url 'fight' stage.id %}" class="btn btn-danger">Walcz</a>
+
+    <p>
+        {% if stage.prev.count == 1 %}
+            <a href="{% url 'stage_detail' stage.prev.first.id %}" class="btn bg-primary">poprzednia</a>
+        {% endif %}
+        <a href="{% url 'stage_detail' stage.next_stage.id %}" class="btn bg-primary">następna</a>
+    </p>
+
 
 
 {% endblock %}
